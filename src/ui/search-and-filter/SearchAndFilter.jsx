@@ -7,11 +7,12 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { PFTContext } from "../../store/store";
 
-function SearchAndFilter() {
+function SearchAndFilter({setFilterKW, setFilterOpt, filterKW, filterOpt}) {
   const {state} = useContext(PFTContext);
+  const sortRef = useRef();
   
   return (
     <Grid container spacing={6} sx={{ mt: 2 }}>
@@ -22,11 +23,13 @@ function SearchAndFilter() {
         label='Sort By'
         placeholder="Sort By"
           fullWidth
+          value={filterKW}
+          onChange={(e, value)=>{setFilterKW(value)}}
           slotProps={{
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <IconButton onClick={() => {}}>
+                  <IconButton >
                     <Search />
                   </IconButton>
                 </InputAdornment>
@@ -41,7 +44,10 @@ function SearchAndFilter() {
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           label="Sort By"
-          onChange={() => {}}
+          value={filterOpt}
+          onChange={(e, value) => {
+            setFilterOpt(value);
+          }}
         >
           <MenuItem value={"income"}>Income</MenuItem>
           <MenuItem value={"expenses"}>Expenses</MenuItem>

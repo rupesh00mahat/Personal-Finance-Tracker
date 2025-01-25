@@ -6,7 +6,7 @@ function createData(name, type, amount) {
   return { name,type, amount};
 }
 
-function TransactionTable() {
+function TransactionTable({filterKW, filterOpt}) {
   const [rows, setRows] = useState([]);
   const {state} = useContext(PFTContext);
   console.log(state);
@@ -58,18 +58,36 @@ function TransactionTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows && rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.type}</TableCell>
-                <TableCell align="right">{row.amount}</TableCell>
-              </TableRow>
-            ))}
+            {rows && rows.map((row) => {
+              
+             if(filterKW !== '' || filterOpt !== 'all'){
+              if(row.name.includes(filterKW) && row.type === filterOpt){
+                return <TableRow
+              key={row.name}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell align="right">{row.type}</TableCell>
+              <TableCell align="right">{row.amount}</TableCell>
+            </TableRow>
+              }else{
+                <></>
+              }
+             }else{
+              return <TableRow
+              key={row.name}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell align="right">{row.type}</TableCell>
+              <TableCell align="right">{row.amount}</TableCell>
+            </TableRow>
+             }
+            })}
           </TableBody>
         </Table>
       </TableContainer>

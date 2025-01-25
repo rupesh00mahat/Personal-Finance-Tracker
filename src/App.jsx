@@ -15,25 +15,12 @@ import AddTransactionDialog from "./ui/dialog/AddTransactionDialog";
 function App() {
   const [openDialog, setDialogOpen] = useState(false);
   const [triggeredFrom, setTriggerFrom] = useState("");
+  const [filterKW, setFilterKW] = useState('');
+  const [filterOpt, setFilterOpt] = useState('all');
   
-
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-
   const handleClose = () => {
     setDialogOpen(false);
   };
-
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-  ];
-
-
 
   return (
     <>
@@ -44,8 +31,8 @@ function App() {
            <LineChartWrapper/>
           <BarGraph/>
           </Grid>
-      <SearchAndFilter/>
-         <TransactionTable rows={rows}/>
+      <SearchAndFilter filterKW={filterKW} filterOpt={filterOpt} setFilterKW={setFilterKW} setFilterOpt={setFilterOpt}/>
+         <TransactionTable filterKW={filterKW} filterOpt={filterOpt}/>
         </Container>
         <AddTransactionDialog handleClose={handleClose} openDialog={openDialog} triggeredFrom={triggeredFrom}/>
       </PFTContextProvider>
