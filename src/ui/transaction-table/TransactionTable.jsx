@@ -9,7 +9,7 @@ function createData(name, type, amount) {
 function TransactionTable({filterKW, filterOpt}) {
   const [rows, setRows] = useState([]);
   const {state} = useContext(PFTContext);
-  console.log(state);
+  console.log(filterKW, filterOpt);
 
   useEffect(()=>{
     let income = state.income && state.income.map(({name, type, amount})=> {return createData(name, type, amount)})

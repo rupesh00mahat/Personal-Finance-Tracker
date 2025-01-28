@@ -11,6 +11,7 @@ import BarGraph from "./ui/bar-graph/bar-graph";
 import SearchAndFilter from "./ui/search-and-filter/SearchAndFilter";
 import TransactionTable from "./ui/transaction-table/TransactionTable";
 import AddTransactionDialog from "./ui/dialog/AddTransactionDialog";
+import Login from "./ui/login/login";
 
 function App() {
   const [openDialog, setDialogOpen] = useState(false);
@@ -24,7 +25,7 @@ function App() {
 
   return (
     <>
-      <PFTContextProvider>
+      {/* <PFTContextProvider>
         <Container sx={{ mt: 5 }}>
           <Info setDialogOpen={setDialogOpen} setTriggerFrom={setTriggerFrom}/>
           <Grid container sx={{ mt: 2 }} spacing={2}>
@@ -35,7 +36,8 @@ function App() {
          <TransactionTable filterKW={filterKW} filterOpt={filterOpt}/>
         </Container>
         <AddTransactionDialog handleClose={handleClose} openDialog={openDialog} triggeredFrom={triggeredFrom}/>
-      </PFTContextProvider>
+      </PFTContextProvider> */}
+      <Login/>
     </>
   );
 }

@@ -67,7 +67,7 @@ function Info({setDialogOpen, setTriggerFrom}) {
         <Button
           onClick={() => {
             setDialogOpen(true);
-            setTriggerFrom("expense");
+            setTriggerFrom("expenses");
           }}
           variant="contained"
           fullWidth

@@ -24,7 +24,7 @@ function SearchAndFilter({setFilterKW, setFilterOpt, filterKW, filterOpt}) {
         placeholder="Sort By"
           fullWidth
           value={filterKW}
-          onChange={(e, value)=>{setFilterKW(value)}}
+          onChange={(e, value)=>{setFilterKW(e.target.value)}}
           slotProps={{
             input: {
               startAdornment: (
@@ -45,8 +45,8 @@ function SearchAndFilter({setFilterKW, setFilterOpt, filterKW, filterOpt}) {
           id="demo-simple-select"
           label="Sort By"
           value={filterOpt}
-          onChange={(e, value) => {
-            setFilterOpt(value);
+          onChange={(e) => {
+            setFilterOpt(e.target.value);
           }}
         >
           <MenuItem value={"income"}>Income</MenuItem>
