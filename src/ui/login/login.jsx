@@ -1,28 +1,15 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
-import cong from "../../firebase/configuration";
-import { getDatabase, ref, onValue } from "firebase/database";
+import cong, { auth, db } from "../../firebase/configuration";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { PFTContext } from "../../store/store";
+import { useNavigate } from "react-router-dom";
+import {  doc, setDoc } from "firebase/firestore";
 
 function Login() {
-
-    useEffect(()=>{
-        const database = getDatabase(cong);
-        const collectionRef = ref(database,'your_collection');
-
-        const fetchData = () =>{
-            onValue(collectionRef, (snapshot)=>{
-                console.log('snapshot', snapshot);
-                const dataItem = snapshot.val();
-                if(dataItem){
-                    const displayItem = Object.values(dataItem);
-                    console.log(displayItem);
-                }
-            })
-        }
-fetchData();
-    },[])
-
+  const { dispatch } = useContext(PFTContext);
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -30,9 +17,38 @@ fetchData();
     setValue,
   } = useForm({ defaultValues: { username: "", password: "" } });
 
-  const onSubmit = (data) => {
-    console.log(data);
-  }
+  const onSubmit = async (data) => {
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        data.username,
+        data.password
+      ).then(async (userCredentials) => {
+        dispatch({
+          type: "SET_USER_CREDENTIALS",
+          payload: {
+            userId: userCredentials.user.uid,
+            email: userCredentials.user.email,
+          },
+        });
+        try {
+          await setDoc(
+            doc(db, "users", userCredentials.user.uid),
+            {
+              createdAt: new Date(),
+              email: userCredentials.user.email,
+              transactions: {income: [], expenses: []},
+              userId: userCredentials.user.uid
+            }
+          );
+        } catch (error) {
+        }
+      });
+    } catch (err) {
+    }
+    navigate("/dashboard");
+
+  };
   return (
     <Card sx={{ p: 2, width: "50%", m: "5rem auto", textAlign: "center" }}>
       <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>
@@ -71,7 +87,14 @@ fetchData();
             />
           )}
         />
-        <Button fullWidth sx={{mt:2,p:1}} variant="contained" type="submit">Submit</Button>
+        <Button
+          fullWidth
+          sx={{ mt: 2, p: 1 }}
+          variant="contained"
+          type="submit"
+        >
+          Submit
+        </Button>
       </form>
     </Card>
   );
