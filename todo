@@ -2,5 +2,9 @@
 - Add date option in textfield -- done
 - add line chart by date -- done 
 - add filtering and sorting ---- done
-- create a login page ---
-- connect to firebase
+- create a login page --- done
+- connect to firebase --- done
+
+---------------------------------------------
+- implement login instead of registration in login
+- add add income and add expense functionality

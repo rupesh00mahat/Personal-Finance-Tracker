@@ -1,6 +1,6 @@
 import { arrayUnion, doc, updateDoc } from "@firebase/firestore";
-import { createContext, useReducer } from "react";
-import {db} from '../firebase/configuration';
+import { createContext, useEffect, useReducer } from "react";
+import { db } from "../firebase/configuration";
 export const PFTContext = createContext();
 
 const calculateAmount = (item) => {
@@ -12,37 +12,31 @@ const calculateAmount = (item) => {
 const pftReducer = (state, action) => {
   if (action.type === "ADD_INCOME") {
     let newIncome = calculateAmount([...state.income, action.payload]);
-    // try{
-    //   const userDocRef = doc(db, "users", state.userId);
-    //   await updateDoc(userDocRef,{
-    //       "transactions.income": arrayUnion(action.payload)
-    //   })
-    // }catch(error){
-    //   console.log('error', error);
-    // }
+
     return {
       ...state,
       income: [...state.income, action.payload],
       incomeAmt: newIncome,
+      addIncome: true,
     };
-  }else if(action.type == 'INITIAL_DATA'){
-    return {...state, income: action.payload.income, expenses:action.payload.expense}
-  }
-  
-  else if (action.type === "ADD_EXPENSE") {
+  } else if (action.type == "INITIAL_DATA") {
+    let incomeAmount = calculateAmount(action.payload.income);
+    let expenseAmount = calculateAmount(action.payload.expense);
+    return {
+      ...state,
+      income: action.payload.income,
+      expenses: action.payload.expense,
+      incomeAmt: incomeAmount,
+      expenseAmt: expenseAmount
+    };
+  } else if (action.type === "ADD_EXPENSE") {
     let newExpense = calculateAmount([...state.expenses, action.payload]);
-    // try{
-    //   const userDocRef = doc(db, "users", state.userId);
-    //   await updateDoc(userDocRef,{
-    //       "transactions.expense": arrayUnion(action.payload)
-    //   })
-    // }catch(error){
-    //   console.log('error', error);
-    // }
+
     return {
       ...state,
       expenses: [...state.expenses, action.payload],
       expenseAmt: newExpense,
+      addExpense: true,
     };
   } else if (action.type === "CALCULATE_EXPENSE") {
     return { ...state, expenseAmt: action.payload };
@@ -59,7 +53,7 @@ const pftReducer = (state, action) => {
       email: "",
     };
   } else if (action.type === "SET_USER_CREDENTIALS") {
-    console.log('hello');
+    console.log("hello");
     return {
       ...state,
       userId: action.payload.userId,
@@ -78,7 +72,40 @@ function PFTContextProvider({ children }) {
     expenseAmt: 0,
     incomeAmt: 0,
     authenticated: false,
+    addIncome: false,
+    addExpense: false,
   });
+
+  useEffect(() => {
+    const updateIncome = async () => {
+      try {
+        const userDocRef = doc(db, "users", state.userId);
+        await updateDoc(userDocRef, {
+          "transactions.income": arrayUnion(state.income.at(-1)),
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    if (state.addIncome == true) {
+      updateIncome();
+    }
+  }, [state.income]);
+  useEffect(() => {
+    const updateExpenses = async () => {
+      try {
+        const userDocRef = doc(db, "users", state.userId);
+        await updateDoc(userDocRef, {
+          "transactions.expense": arrayUnion(state.expenses.at(-1)),
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    if (state.addExpense == true) {
+      updateExpenses();
+    }
+  }, [state.expenses]);
 
   return (
     <PFTContext.Provider value={{ state, dispatch }}>

@@ -32,7 +32,7 @@ function AddTransactionDialog({ handleClose, openDialog, triggeredFrom }) {
 
     dispatch({
       type: triggeredFrom == "income" ? "ADD_INCOME" : "ADD_EXPENSE",
-      payload: { ...data,date: formattedDate, type: triggeredFrom },
+      payload: { ...data, amount: parseInt(data.amount),date: formattedDate, type: triggeredFrom },
     });
     setValue("name", "");
     setValue("amount", 0);

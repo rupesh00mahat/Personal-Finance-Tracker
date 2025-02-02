@@ -1,11 +1,11 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
-import cong, { auth, db } from "../../firebase/configuration";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/configuration";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { PFTContext } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import {  doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 function Login() {
   const { dispatch } = useContext(PFTContext);
@@ -14,40 +14,26 @@ function Login() {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm({ defaultValues: { username: "", password: "" } });
 
   const onSubmit = async (data) => {
     try {
-      await createUserWithEmailAndPassword(
-        auth,
-        data.username,
-        data.password
-      ).then(async (userCredentials) => {
-        dispatch({
-          type: "SET_USER_CREDENTIALS",
-          payload: {
-            userId: userCredentials.user.uid,
-            email: userCredentials.user.email,
-          },
-        });
-        try {
-          await setDoc(
-            doc(db, "users", userCredentials.user.uid),
-            {
-              createdAt: new Date(),
+      await signInWithEmailAndPassword(auth, data.username, data.password).then(
+        (userCredentials) => {
+          console.log("values", userCredentials.user);
+          dispatch({
+            type: "SET_USER_CREDENTIALS",
+            payload: {
+              userId: userCredentials.user.uid,
               email: userCredentials.user.email,
-              transactions: {income: [], expenses: []},
-              userId: userCredentials.user.uid
-            }
-          );
-        } catch (error) {
+            },
+          });
         }
-      });
+      );
+      navigate("/dashboard");
     } catch (err) {
+      console.error("Personal finance tracker - login: ", err.message);
     }
-    navigate("/dashboard");
-
   };
   return (
     <Card sx={{ p: 2, width: "50%", m: "5rem auto", textAlign: "center" }}>
