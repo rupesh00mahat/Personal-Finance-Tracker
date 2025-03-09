@@ -1,7 +1,8 @@
 import { Button, Card, Grid, Typography } from "@mui/material";
 import { useContext } from "react";
 import { PFTContext } from "../../store/store";
-function Info({ setDialogOpen, setTriggerFrom }) {
+import { deleteEverything } from "../../utils/deleteEverything";
+function Info({ setDialogOpen, setTriggerFrom, userId }) {
   const { dispatch, state } = useContext(PFTContext);
   const { incomeAmt, expenseAmt } = state;
 
@@ -17,8 +18,9 @@ function Info({ setDialogOpen, setTriggerFrom }) {
           </Typography>
           <Typography>${parseInt(incomeAmt) - parseInt(expenseAmt)}</Typography>
           <Button
-            onClick={() => {
+            onClick={async() => {
               dispatch({ type: "RESET_BALANCE" });
+              await deleteEverything(userId);
             }}
             variant="contained"
             fullWidth

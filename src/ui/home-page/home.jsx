@@ -13,6 +13,7 @@ import { db } from "../../firebase/configuration";
 function Home() {
   const [openDialog, setDialogOpen] = useState(false);
   const [triggeredFrom, setTriggerFrom] = useState("");
+  const [sortType, changeSortType] = useState('');
   const [filterKW, setFilterKW] = useState("");
   const [filterOpt, setFilterOpt] = useState("all");
   const {state} = useContext(PFTContext);
@@ -45,7 +46,7 @@ function Home() {
   return (
     <>
       <Container sx={{ mt: 5 }}>
-        <Info setDialogOpen={setDialogOpen} setTriggerFrom={setTriggerFrom} />
+        <Info setDialogOpen={setDialogOpen} setTriggerFrom={setTriggerFrom} userId={userId}/>
         <Grid container sx={{ mt: 2 }} spacing={2}>
           <LineChartWrapper />
           <BarGraph />
@@ -56,7 +57,7 @@ function Home() {
           setFilterKW={setFilterKW}
           setFilterOpt={setFilterOpt}
         />
-        <TransactionTable filterKW={filterKW} filterOpt={filterOpt} />
+        <TransactionTable filterKW={filterKW} filterOpt={filterOpt} sortType={sortType} changeSortType={changeSortType}/>
       </Container>
       <AddTransactionDialog
         handleClose={handleClose}

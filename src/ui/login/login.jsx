@@ -5,7 +5,6 @@ import { auth } from "../../firebase/configuration";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { PFTContext } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
 
 function Login() {
   const { dispatch } = useContext(PFTContext);

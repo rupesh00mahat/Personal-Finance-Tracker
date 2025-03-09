@@ -28,7 +28,6 @@ function LineChartWrapper() {
     setSortedAmt(newSortedAmt);
   },[state])
 
-  console.log('sortedArray',sortedArray,'sortedamt', sortedAmt, '');
 
   return (
     <Grid item xs={12} md={8}>

@@ -12,7 +12,6 @@ import { PFTContext } from "../../store/store";
 
 function SearchAndFilter({setFilterKW, setFilterOpt, filterKW, filterOpt}) {
   const {state} = useContext(PFTContext);
-  const sortRef = useRef();
   
   return (
     <Grid container spacing={6} sx={{ mt: 2 }}>
@@ -24,7 +23,7 @@ function SearchAndFilter({setFilterKW, setFilterOpt, filterKW, filterOpt}) {
         placeholder="Sort By"
           fullWidth
           value={filterKW}
-          onChange={(e, value)=>{setFilterKW(e.target.value)}}
+          onChange={(e)=>{setFilterKW(e.target.value)}}
           slotProps={{
             input: {
               startAdornment: (

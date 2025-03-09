@@ -30,11 +30,13 @@ function BarGraph() {
             ]}
             width={400}
             height={350}
+            slotProps={{legend:{hidden: true}}}
           />
         </Card>
       )}
     </Grid>
   );
 }
+
 
 export default BarGraph;
