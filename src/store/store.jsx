@@ -53,7 +53,6 @@ const pftReducer = (state, action) => {
       email: "",
     };
   } else if (action.type === "SET_USER_CREDENTIALS") {
-    console.log("hello");
     return {
       ...state,
       userId: action.payload.userId,
@@ -84,7 +83,6 @@ function PFTContextProvider({ children }) {
           "transactions.income": arrayUnion(state.income.at(-1)),
         });
       } catch (error) {
-        console.log("error", error);
       }
     };
     if (state.addIncome == true) {
@@ -99,7 +97,6 @@ function PFTContextProvider({ children }) {
           "transactions.expense": arrayUnion(state.expenses.at(-1)),
         });
       } catch (error) {
-        console.log("error", error);
       }
     };
     if (state.addExpense == true) {

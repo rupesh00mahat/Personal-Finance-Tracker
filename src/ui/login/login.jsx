@@ -20,7 +20,6 @@ function Login() {
     try {
       await signInWithEmailAndPassword(auth, data.username, data.password).then(
         (userCredentials) => {
-          console.log("values", userCredentials.user);
           dispatch({
             type: "SET_USER_CREDENTIALS",
             payload: {

@@ -18,7 +18,6 @@ function Home() {
   const {state} = useContext(PFTContext);
   const {userId} = state
   const {dispatch} = useContext(PFTContext);
-  console.log(state);
 
     useEffect(()=>{
         const fetchTransaction = async () =>{
@@ -26,11 +25,9 @@ function Home() {
             const userDocRef = doc(db, "users", userId);
             const userDocSnap = await getDoc(userDocRef);
             if(userDocSnap.exists()){
-              console.log('userDocSnap', userDocSnap.data()); 
                 dispatch({type:'INITIAL_DATA', payload:{income: userDocSnap?.data()?.transactions?.income, expense: userDocSnap?.data()?.transactions?.expenses}});
               return {id: userDocSnap.id, ...userDocSnap.data()};
             }else{
-              console.log('No such document!');
               return null;
             }
            }catch(error){
