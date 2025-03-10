@@ -16,20 +16,24 @@ import { PFTContext } from "../../store/store";
 import { sortByType } from "../../utils/sortByType";
 import { convertToCSV } from "../../utils/convertToCSV";
 import { downloadToCSV } from "../../utils/downloadCSV";
+import { Delete } from "@mui/icons-material";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase/configuration";
 
-function createData(name, type, amount, date) {
-  return { name, type, amount,date };
+function createData(name, type, amount, date, id) {
+  return { name, type, amount, date, id };
 }
+
+
 
 function TransactionTable({ filterKW, filterOpt, sortType, changeSortType }) {
   const [rows, setRows] = useState([]);
-  const { state } = useContext(PFTContext);
+  const { state, dispatch } = useContext(PFTContext);
   useEffect(() => {
     if (!state.income || !state.expenses) return;
-    console.log("Does this run?");
     const transaction = [...state.income, ...state.expenses].map(
-      ({ name, type, amount, date }) => {
-        return createData(name, type, amount, date);
+      ({ name, type, amount, date, id }) => {
+        return createData(name, type, amount, date, id);
       }
     );
     setRows(transaction);
@@ -41,12 +45,37 @@ function TransactionTable({ filterKW, filterOpt, sortType, changeSortType }) {
       : filterOpt == "all" || row.type == filterOpt;
   });
 
-  const sortedRows = sortByType(sortType,filteredRows);
+  const sortedRows = sortByType(sortType, filteredRows);
 
- const exportToCSV = () =>{
-  const convertedData = convertToCSV(sortedRows);
-  downloadToCSV(convertedData);
- }
+  const exportToCSV = () => {
+    const convertedData = convertToCSV(sortedRows);
+    downloadToCSV(convertedData);
+  };
+
+  async function handleDelete(id, userId, type) {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    console.log(userDoc.data());
+    const selectedTransactionArray =
+      type == "income"
+        ? userDoc.data()?.transactions.income
+        : userDoc.data()?.transactions.expenses;
+    const filteredTransactions = selectedTransactionArray.filter(
+      (transaction) => transaction.id !== id
+    );
+    if (type == "income") {
+      await updateDoc(userRef, {
+        "transactions.income": filteredTransactions,
+      });
+      dispatch({type:'UPDATE_INCOME', payload: filteredTransactions})
+    } else {
+      await updateDoc(userRef, {
+        "transactions.expenses": filteredTransactions,
+      });
+      dispatch({type:'UPDATE_EXPENSE', payload: filteredTransactions})
+
+    }
+  }
 
   return (
     <>
@@ -61,12 +90,18 @@ function TransactionTable({ filterKW, filterOpt, sortType, changeSortType }) {
             <Grid item container xs={6}>
               {[
                 { label: "Sort By Date", value: "date" },
-                { label: "Sort By Amount", value: 'amount' },
-                {label:"Sort By Alphabet", value: 'alphabet'},
-              ].map(({label, value}, index) => {
+                { label: "Sort By Amount", value: "amount" },
+                { label: "Sort By Alphabet", value: "alphabet" },
+              ].map(({ label, value }, index) => {
                 return (
-                  <Grid key={value+index} item xs={12} md={4}>
-                    <Button  onClick={()=>{changeSortType(value)}} fullWidth variant={value == sortType ? "contained" :"outlined"}>
+                  <Grid key={value + index} item xs={12} md={4}>
+                    <Button
+                      onClick={() => {
+                        changeSortType(value);
+                      }}
+                      fullWidth
+                      variant={value == sortType ? "contained" : "outlined"}
+                    >
                       {label}
                     </Button>
                   </Grid>
@@ -112,6 +147,19 @@ function TransactionTable({ filterKW, filterOpt, sortType, changeSortType }) {
                         <TableCell align="right">{row.type}</TableCell>
                         <TableCell align="right">{row.amount}</TableCell>
                         <TableCell align="right">{row.date}</TableCell>
+                        <TableCell align="right">
+                          <Button
+                            onClick={async () => {
+                              await handleDelete(
+                                row.id,
+                                state.userId,
+                                row.type
+                              );
+                            }}
+                          >
+                            <Delete />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     );
                   })}

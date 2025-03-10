@@ -12,6 +12,7 @@ import { PFTContext } from "../../store/store";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
+import { v4 as uuid } from "uuid";
 
 function AddTransactionDialog({ handleClose, openDialog, triggeredFrom }) {
   const {
@@ -28,11 +29,12 @@ function AddTransactionDialog({ handleClose, openDialog, triggeredFrom }) {
   });
   const { dispatch } = useContext(PFTContext);
   const onSubmit = (data) => {
+    const newId = uuid();
     const formattedDate = dayjs(data.date).format('YYYY-MM-DD');
 
     dispatch({
       type: triggeredFrom == "income" ? "ADD_INCOME" : "ADD_EXPENSE",
-      payload: { ...data, amount: parseInt(data.amount),date: formattedDate, type: triggeredFrom },
+      payload: { ...data, amount: parseInt(data.amount),date: formattedDate, type: triggeredFrom, id: newId },
     });
     setValue("name", "");
     setValue("amount", 0);

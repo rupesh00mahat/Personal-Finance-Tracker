@@ -12,7 +12,6 @@ const calculateAmount = (item) => {
 const pftReducer = (state, action) => {
   if (action.type === "ADD_INCOME") {
     let newIncome = calculateAmount([...state.income, action.payload]);
-
     return {
       ...state,
       income: [...state.income, action.payload],
@@ -27,7 +26,7 @@ const pftReducer = (state, action) => {
       income: action.payload.income,
       expenses: action.payload.expense,
       incomeAmt: incomeAmount,
-      expenseAmt: expenseAmount
+      expenseAmt: expenseAmount,
     };
   } else if (action.type === "ADD_EXPENSE") {
     let newExpense = calculateAmount([...state.expenses, action.payload]);
@@ -59,6 +58,10 @@ const pftReducer = (state, action) => {
       email: action.payload.email,
       authenticated: true,
     };
+  } else if (action.type == "UPDATE_INCOME") {
+    return { ...state, income: action.payload };
+  } else if (action.type == "UPDATE_EXPENSE") {
+    return { ...state, expenses: action.payload };
   }
   return state;
 };
@@ -82,8 +85,7 @@ function PFTContextProvider({ children }) {
         await updateDoc(userDocRef, {
           "transactions.income": arrayUnion(state.income.at(-1)),
         });
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     if (state.addIncome == true) {
       updateIncome();
@@ -94,10 +96,9 @@ function PFTContextProvider({ children }) {
       try {
         const userDocRef = doc(db, "users", state.userId);
         await updateDoc(userDocRef, {
-          "transactions.expense": arrayUnion(state.expenses.at(-1)),
+          "transactions.expenses": arrayUnion(state.expenses.at(-1)),
         });
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     if (state.addExpense == true) {
       updateExpenses();
